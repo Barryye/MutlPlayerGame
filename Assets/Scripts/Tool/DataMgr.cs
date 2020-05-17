@@ -16,4 +16,9 @@ using UnityEngine;
 public class DataMgr  
 {
     public const string m_projectName = "Prefab";
+
+
+
+    public static string FilePath = Application.streamingAssetsPath+"/Config";
+
 }

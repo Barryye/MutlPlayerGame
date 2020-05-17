@@ -54,8 +54,15 @@ public class UserRequest : BaseRequest
         switch (pack.Returncode)
         {
             case ReturnCode.Succeed:
-                //TipPlanel.Open("登录成功");
-                face.m_Role = pack.Playerpack[0];
+                List<PlayerPack> players = DateReader.StrToObject<List<PlayerPack>>(DataMgr.FilePath + "/Role.txt");
+                foreach (var item in players)
+                {
+                    if (item.Playername== pack.Playerpack[0].Playername)
+                    {
+                        face.m_Role = item;
+                    }
+                }
+                
                 UIManager.Instance.PushPanelFromRes(UIPanelName.LobbyPanel);
                 break;
             case ReturnCode.Fail:
@@ -95,7 +102,9 @@ public class UserRequest : BaseRequest
             case ReturnCode.ReturnNone:
                 break;
             case ReturnCode.Succeed:
-                 UIManager.Instance.PushPanelFromRes(UIPanelName.LoginPanel);
+                UIManager.Instance.PushPanelFromRes(UIPanelName.LoginPanel);
+                PlayerPack player = pack.Playerpack[0];
+                DateReader.ObjectToJson(player, DataMgr.FilePath+"/Role.txt");
                 TipPlanel.Open("注册成功");
                 break;
             case ReturnCode.Fail:
