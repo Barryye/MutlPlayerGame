@@ -61,4 +61,9 @@ public class BaseRequest :MonoBehaviour
         face.Send(pack);
         Debug.Log("发送数据");
     }
+
+    public virtual void SendRequestUDP(Mainpack pack)
+    {
+        face.SendUDP(pack);
+    }
 }

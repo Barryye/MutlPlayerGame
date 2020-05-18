@@ -33,11 +33,19 @@ public class GameFaced : MonoBehaviour
     {
         get { return gameRequest; }
     }
+    public string UserName
+    {
+        get;
+        set;
+    }
+
     private static GameFaced instance;
     public static GameFaced Face
     {
         get { return instance; }
     }
+
+
     private void Awake()
     {
         instance = this;
@@ -93,6 +101,13 @@ public class GameFaced : MonoBehaviour
     public void Send(Mainpack pack)
     {
         clientManager.Send(pack);
+    }
+
+    public void SendUDP(Mainpack pack)
+    {
+        pack.User = UserName;
+        clientManager.SendUDP(pack);
+            
     }
 
     //public void HandleResponse(Mainpack pack)

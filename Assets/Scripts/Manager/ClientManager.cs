@@ -11,9 +11,9 @@
 
 using SocketGameProtocol;
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using UnityEngine;
  
 public class ClientManager : BaseManager 
@@ -21,6 +21,7 @@ public class ClientManager : BaseManager
 
     private Socket socket;
     private Message message;
+    private Thread aucThread;
 
     public bool connect;
     public ClientManager(GameFaced faced) : base(faced)
@@ -32,6 +33,8 @@ public class ClientManager : BaseManager
     public override void OnInit()
     {
         InitSocket();
+
+        InitUDP();
         base.OnInit();
     }
 
@@ -44,6 +47,11 @@ public class ClientManager : BaseManager
         pack.Actioncode = ActionCode.Close;
         face.Send(pack);
         CloseSocket();
+        if (aucThread!=null)
+        {
+            aucThread.Abort();
+            aucThread= null;
+        }
         base.OnDestory();
         
     }
@@ -135,5 +143,51 @@ public class ClientManager : BaseManager
         
     }
 
+
+
+    #region UDP
+    private Socket udpClient;
+    private IPEndPoint ipEndPoint;
+    private EndPoint EPoint;
+    private Byte[] buffer = new Byte[1024];
+
+    private void InitUDP()
+    {
+        udpClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        ipEndPoint = new IPEndPoint(IPAddress.Any, port:6667);
+        EPoint = ipEndPoint;
+        try
+        {
+            udpClient.Connect(EPoint);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log("UDP链接失败"+e);
+            return;
+        }
+        aucThread = new Thread(ReceiveMsg);
+        aucThread.Start();
+    }
+
+    private void ReceiveMsg()
+    {
+        Debug.Log("UDP开始接收");
+        while (true)
+        {
+            int len = udpClient.ReceiveFrom(buffer, ref EPoint);
+            Mainpack pack = (Mainpack)Mainpack.Descriptor.Parser.ParseFrom(buffer, offset: 0, length: len);
+            Debug.Log("接收数据" + pack.Actioncode.ToString() + pack.User);
+            HandleResponse(pack);
+        }
+    }
+
+    public void SendUDP(Mainpack pack)
+    {
+        Byte[] sendBuff = Message.PackDataUDP(pack);
+        udpClient.Send(sendBuff, sendBuff.Length, socketFlags: SocketFlags.None);
+    }
+
+    #endregion
 
 }
