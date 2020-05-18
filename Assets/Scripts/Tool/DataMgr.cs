@@ -21,4 +21,8 @@ public class DataMgr
 
     public static string FilePath = Application.streamingAssetsPath+"/Config";
 
+
+    #region NetWork
+    public const string IP = "127.0.0.1";
+    #endregion
 }

@@ -53,7 +53,7 @@ public class BaseRequest :MonoBehaviour
         EventManger.Broadcast<Mainpack>(pack.Actioncode, pack);
     }
     /// <summary>
-    /// 客户端发送消息
+    /// 使用TCP发送消息
     /// </summary>
     /// <param name="pack"></param>
     public virtual void SendRequest(Mainpack pack)
@@ -61,7 +61,10 @@ public class BaseRequest :MonoBehaviour
         face.Send(pack);
         Debug.Log("发送数据");
     }
-
+    /// <summary>
+    /// 发送UDP数据
+    /// </summary>
+    /// <param name="pack"></param>
     public virtual void SendRequestUDP(Mainpack pack)
     {
         face.SendUDP(pack);

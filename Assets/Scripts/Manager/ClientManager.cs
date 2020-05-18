@@ -154,7 +154,7 @@ public class ClientManager : BaseManager
     private void InitUDP()
     {
         udpClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipEndPoint = new IPEndPoint(IPAddress.Any, port:6667);
+        ipEndPoint = new IPEndPoint(IPAddress.Parse(DataMgr.IP), port:6667);
         EPoint = ipEndPoint;
         try
         {
@@ -163,7 +163,7 @@ public class ClientManager : BaseManager
         catch (Exception e)
         {
 
-            Debug.Log("UDP链接失败"+e);
+            Debug.LogError("UDP链接失败"+e);
             return;
         }
         aucThread = new Thread(ReceiveMsg);

@@ -47,7 +47,9 @@ namespace SocketMultplayerGameServer.Servers
                 receiveThread = null;
             }
         }
-
+        /// <summary>
+        /// UDP接收消息
+        /// </summary>
         private void ReceiveMsg()
         {
             while (true)
@@ -67,7 +69,11 @@ namespace SocketMultplayerGameServer.Servers
             }
             controllerManager.HandRequest(pack, client, true);
         }
-
+        /// <summary>
+        /// UDP发送消息
+        /// </summary>
+        /// <param name="pack"></param>
+        /// <param name="point"></param>
         public void SendUDP(Mainpack pack,EndPoint point)
         {
             byte[] buff = Message.PackDataUDP(pack);

@@ -1,13 +1,10 @@
 ﻿using SocketMultplayerGameServer.Controller;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using SocketGameProtocol;
 using System.Timers;
+using System.Net.Sockets;
+using SocketGameProtocol;
 using System.Threading;
 
 namespace SocketMultplayerGameServer.Servers
@@ -15,7 +12,7 @@ namespace SocketMultplayerGameServer.Servers
     class Server
     {
         private Socket socket;
-        private Timer timer;
+        private System.Timers.Timer timer;
         private float heartBeat = 30;
 
         private UDPServer us;
@@ -49,7 +46,7 @@ namespace SocketMultplayerGameServer.Servers
         #region 心跳
         private void HeartTimerStartUp()
         {
-            timer = new Timer(1000);
+            timer = new System.Timers.Timer(1000);
             timer.AutoReset = true;
             timer.Enabled = true;
             timer.Elapsed += HeartBeat;
@@ -115,7 +112,11 @@ namespace SocketMultplayerGameServer.Servers
         }
         #endregion
 
-
+        /// <summary>
+        /// 获取接收UDP消息是哪个客户端
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public Client ClientFromUserName(string user)
         {
             foreach (Client item in clientList)
@@ -126,19 +127,6 @@ namespace SocketMultplayerGameServer.Servers
                 }
             }
             return null;
-        }
-
-        public bool SetIEP(EndPoint ipEnd,string user)
-        {
-            foreach (Client item in clientList)
-            {
-                if (item.UserName==user)
-                {
-                    item.IEP = ipEnd;
-                    return true;
-                }
-            }
-            return false;
         }
 
         /// <summary>
@@ -156,12 +144,21 @@ namespace SocketMultplayerGameServer.Servers
             UpdateHeart(client);
             controllerManager.HandRequest(pack, client);
         }
-
+        /// <summary>
+        /// 移除客户端
+        /// </summary>
+        /// <param name="client"></param>
         public void RemoveClient(Client client)
         {
             clientList.Remove(client);
         }
-
+        /// <summary>
+        /// TCP转发消息
+        /// </summary>
+        /// <param name="clientLst">客户端列表</param>
+        /// <param name="pack">消息包</param>
+        /// <param name="client">当前客户端</param>
+        /// <param name="Unself">是否不给当前客户端转发</param>
         public void TranslateMSG(List<Client> clientLst,Mainpack pack,Client client,bool Unself =true)
         {
             foreach (var item in clientLst)
