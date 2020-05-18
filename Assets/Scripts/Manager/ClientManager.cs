@@ -124,7 +124,7 @@ public class ClientManager : BaseManager
     {
         try
         {
-          int s= socket.Send(Message.PackData(pack));
+            int s= socket.Send(Message.PackData(pack));
             Debug.Log(s);
         }
         catch (Exception e)
