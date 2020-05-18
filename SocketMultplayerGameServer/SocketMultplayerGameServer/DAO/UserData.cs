@@ -57,7 +57,7 @@ namespace SocketMultplayerGameServer.DAO
         /// <param name="pack"></param>
         /// <param name="mySqlConnection"></param>
         /// <returns></returns>
-        public bool Login(Mainpack pack, MySqlConnection mySqlConnection)
+        public bool Login(ref Mainpack pack, MySqlConnection mySqlConnection)
         {
             string username = pack.Loginpack.Username;
             string password = pack.Loginpack.Password;

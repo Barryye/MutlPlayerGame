@@ -16,6 +16,7 @@ using UnityEngine;
 public class DataMgr  
 {
     public const string m_projectName = "Prefab";
+    public const string Item= "Prefab/UI/";
 
 
 

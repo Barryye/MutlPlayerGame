@@ -23,7 +23,8 @@ public class LobbyPanel : UGUIPanel
     private Button exitBtn, chatBtn, sendBtn;
     private LobbyRequest lobbyRequest;
     private InputField InputField;
-
+    private string txt;
+    private Transform Par;
     private void Start()
     {
         chatPanel = transform.Find("ChatPanel");
@@ -33,6 +34,9 @@ public class LobbyPanel : UGUIPanel
         InputField = transform.GetComponent<InputField>("ChatPanel/Scroll View/InputField");
         lobbyRequest = GameObject.FindObjectOfType<LobbyRequest>();
 
+
+        Par = transform.Find("ChatPanel/Scroll View/Viewport/Content");
+        InputField.onValueChanged.AddListener((str) => { txt = str; });
     }
 
 
@@ -44,11 +48,25 @@ public class LobbyPanel : UGUIPanel
 
     private void SendChatCall()
     {
-        lobbyRequest.SendChat(InputField.text);
+        if (txt!=null)
+        {
+            lobbyRequest.SendChat(txt, this);
+        }
     }
 
-    public void GetMessage(Mainpack pack)
+    public void GetMessage(Mainpack pack,bool isSelf=false)
     {
-
+        GameObject GO;
+        if (isSelf)
+        {
+            GO= PublicFunc.CreateObjFromResAndRest(DataMgr.Item+"Mine",Par);
+        }
+        else
+        {
+            GO= PublicFunc.CreateObjFromResAndRest(DataMgr.Item + "Character",Par);
+        }
+        GO.transform.GetComponent<Text>("Content/Text").text=pack.Str;
+        GO.transform.GetComponent<Text>("RoleImg/Name").text=pack.Playerpack[0].Playername;
+        chatBtn.GetComponentInChildren<Text>().text= pack.Playerpack[0].Playername+":"+ pack.Str;
     }
 }
