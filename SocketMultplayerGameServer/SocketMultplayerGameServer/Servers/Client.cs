@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using MySql.Data.MySqlClient;
 using SocketGameProtocol;
@@ -14,12 +15,17 @@ namespace SocketMultplayerGameServer.Servers
         private Socket socket;
         private Message message;
         private UserData userData;
+        private Socket udpClient;
+        private EndPoint remoteEP;
+
         public static Action<Room> act;
         public UserData GetUserData
         {
             get { return userData; }
         }
         private Server server;
+
+        public UDPServer us;
 
         private string userName;
         public string UserName
@@ -31,6 +37,12 @@ namespace SocketMultplayerGameServer.Servers
         {
             get;
             set;
+        }
+
+        public EndPoint IEP
+        {
+            get { return remoteEP; }
+            set { remoteEP = value; }
         }
 
         /// <summary>
@@ -95,6 +107,16 @@ namespace SocketMultplayerGameServer.Servers
         public void Send(Mainpack pack)
         {
             socket.Send(Message.PackData(pack));
+        }
+
+        /// <summary>
+        ///发送UDP包
+        /// </summary>
+        /// <param name="pack"></param>
+        public void SendUDP(Mainpack pack)
+        {
+            if (IEP == null) return;
+            us.SendUDP(pack, IEP);
         }
 
         /// <summary>

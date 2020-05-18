@@ -33,7 +33,7 @@ namespace SocketMultplayerGameServer.Controller
         /// 事件处理
         /// </summary>
         /// <param name="pack"></param>
-        public void HandRequest(Mainpack pack,Client client)
+        public void HandRequest(Mainpack pack, Client client,bool isUDP=false)
         {
 
             if(controDict.TryGetValue(pack.Requestcode,out BaseController controller))
@@ -43,14 +43,25 @@ namespace SocketMultplayerGameServer.Controller
                 if (method == null)
                 {
                     Helper.Log("没有找到对应的" + metname + "方法");
+                    return;
                 }
-                object[] obj = new object[] { server, client,pack};
-                object ret = method.Invoke(controller, obj);
-                if(ret!=null)
+                object[] obj;
+                if (isUDP)
                 {
-                    client.Send(ret as Mainpack);
-                    Helper.Log("发送消息给客户端");
+                    obj = new object[] { client, pack };
+                    method.Invoke(controller, obj);
                 }
+                else
+                {
+                    obj = new object[] { server, client, pack };
+                    object ret = method.Invoke(controller, obj);
+                    if (ret != null)
+                    {
+                        client.Send(ret as Mainpack);
+                        Helper.Log("发送消息给客户端");
+                    }
+                }
+                
 
             }
             else

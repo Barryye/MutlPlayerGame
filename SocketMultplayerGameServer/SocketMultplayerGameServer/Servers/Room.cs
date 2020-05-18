@@ -46,6 +46,18 @@ namespace SocketMultplayerGameServer.Servers
             server.TranslateMSG(clientList, pack, client);
         }
 
+        public void TranslateUDPMSG(Client client,Mainpack pack)
+        {
+            foreach (Client item in clientList)
+            {
+                if (item.Equals(client))
+                {
+                    continue;
+                }
+                item.SendUDP(pack);
+            }
+        }
+
         public void Join(Server server,Client client)
         {
             clientList.Add(client);

@@ -46,18 +46,31 @@ public class UserRequest : BaseRequest
         pack.Actioncode = ActionCode.Login;
 
         pack.Loginpack = loginPack;
+
+        List<PlayerPack> players = DateReader.ReadJsonToObject<List<PlayerPack>>(DataMgr.FilePath + "/Role.txt");
+        foreach (var item in players)
+        {
+            if (item.Account==user)
+            {
+                pack.Playerpack.Add(item);
+            }
+        }
         
         SendRequest(pack);
     }
+    /// <summary>
+    /// 登录回调
+    /// </summary>
+    /// <param name="pack"></param>
     private void LoginCallback(Mainpack pack)
     {
         switch (pack.Returncode)
         {
             case ReturnCode.Succeed:
-                List<PlayerPack> players = DateReader.StrToObject<List<PlayerPack>>(DataMgr.FilePath + "/Role.txt");
+                List<PlayerPack>  players = DateReader.ReadJsonToObject<List<PlayerPack>> (DataMgr.FilePath + "/Role.txt");
                 foreach (var item in players)
                 {
-                    if (item.Playername== pack.Playerpack[0].Playername)
+                    if (item.Account== pack.Playerpack[0].Account)
                     {
                         face.m_Role = item;
                     }
@@ -95,6 +108,11 @@ public class UserRequest : BaseRequest
         pack.Loginpack = loginPack;
         SendRequest(pack);
     }
+
+    /// <summary>
+    /// 注册回调
+    /// </summary>
+    /// <param name="pack"></param>
     private void LogonCallback(Mainpack pack)
     {
         switch (pack.Returncode)
@@ -104,7 +122,9 @@ public class UserRequest : BaseRequest
             case ReturnCode.Succeed:
                 UIManager.Instance.PushPanelFromRes(UIPanelName.LoginPanel);
                 PlayerPack player = pack.Playerpack[0];
-                DateReader.ObjectToJson(player, DataMgr.FilePath+"/Role.txt");
+                List<PlayerPack> players = new List<PlayerPack>();
+                players.Add(player);
+                DateReader.ObjectToJson(players, DataMgr.FilePath+"/Role.txt");
                 TipPlanel.Open("注册成功");
                 break;
             case ReturnCode.Fail:

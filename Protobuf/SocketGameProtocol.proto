@@ -1,0 +1,125 @@
+syntax ="proto3";
+package SocketGameProtocol;
+
+enum RequestCode
+{
+    RequestNone=0;
+    //用户
+    User=1;
+    //房间
+    Room=2;
+    //游戏
+    Game=3;
+    //游戏逻辑
+    Logic=4;
+    //大厅
+    Lobby=5;
+}
+
+enum ActionCode
+{
+    ActionNone=0;
+    //注册
+    Logon=1;
+    //登录
+    Login=2;
+    //创建房间
+    CreateRoom=3;
+    //查找房间
+    FindRoom=4;
+    //玩家列表
+    PlayerList=5;
+    //加入房间
+    JoinRoom=6;
+    //离开
+    Exit=7;
+    //聊天
+    Chat=8;
+    //开始游戏
+    StarGame=9;
+    //开始游戏指令
+    Starting=10;
+    //更新位置
+    UpPos=11;
+    //离开游戏
+    ExitGame=12;
+    //更新角色和玩家列表
+    UpCharacterList=13;
+    //关闭客户端
+    Close=14;
+    //开火
+    Fire=15;
+    //消息转发
+    TranslateMessage=16;
+    //心跳
+    HeartBeat=17;
+
+}
+
+enum ReturnCode
+{
+    ReturnNone=0;
+    //成功
+    Succeed=1;
+    //失败
+    Fail=2;
+    //没有房间
+    NotRoom=3;
+
+}
+
+message Mainpack
+{
+    RequestCode requestcode=1;
+    ActionCode actioncode=2;
+    ReturnCode returncode=3;
+    LoginPack loginpack=4;
+    string str=5;
+    repeated RoomPack roompack=6;
+    repeated PlayerPack playerpack=7;
+    string user=8;
+}
+
+message LoginPack
+{
+    //用户名
+    string username=1;
+    //密码
+    string password=2;
+}
+
+message RoomPack
+{
+    //房间名
+    string roomname=1;
+    //房间最大人数
+    int32 maxnum=2;
+    //房间当前人数
+    int32 curnum=3;
+    //房间状态
+    int32 statc=4;
+}
+
+message PlayerPack
+{
+    //玩家账号
+    string account=1; 
+    //玩家名称
+    string playername=2;
+    //玩家ID
+    string playerID=3;
+    //玩家血量
+    int32 hp=4;
+    //位置信息
+    PosPack pospack=5;
+}
+
+message PosPack
+{
+    float PosX=1;
+    float PosY=2;
+
+    float RotZ=3;
+
+    float GunRotZ=4;
+}

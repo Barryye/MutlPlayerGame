@@ -19,4 +19,9 @@ public class MessagePanel : UGUIPanel
 {
     
 
+    private void Start()
+    {
+        
+    }
+
 }

@@ -16,9 +16,14 @@ using UnityEngine;
 public class DataMgr  
 {
     public const string m_projectName = "Prefab";
+    public const string Item= "Prefab/UI/";
 
 
 
     public static string FilePath = Application.streamingAssetsPath+"/Config";
 
+
+    #region NetWork
+    public const string IP = "127.0.0.1";
+    #endregion
 }

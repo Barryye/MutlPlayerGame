@@ -23,7 +23,7 @@ namespace SocketMultplayerGameServer.Controller
         {
             if (client.GetUserData.Logon(pack,client.GetMysqlConnect))
             {
-                client.UserName = pack.Playerpack[0].Playername;
+               
                 pack.Returncode = ReturnCode.Succeed;
             }
             else
@@ -39,11 +39,9 @@ namespace SocketMultplayerGameServer.Controller
         /// <returns></returns>
         public Mainpack Login(Server sever, Client client, Mainpack pack)
         {
-            if (client.GetUserData.Login(pack,client.GetMysqlConnect))
+            if (client.GetUserData.Login(ref pack,client.GetMysqlConnect))
             {
-                PlayerPack player = new PlayerPack();
-                player.Playername = "Barry";
-                pack.Playerpack.Add(player);
+                client.UserName = pack.Playerpack[0].Playername;
                 pack.Returncode = ReturnCode.Succeed;
             }
             else

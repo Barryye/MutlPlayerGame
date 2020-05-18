@@ -11,6 +11,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using GameFrameWork.UI;
 using SocketGameProtocol;
 using UnityEngine;
 
@@ -28,7 +29,6 @@ public class LobbyRequest : BaseRequest
     public override void Start()
     {
         base.Start();
-        lobbyPanel = GameFaced.FindObjectOfType<LobbyPanel>();
     }
     public override void OnDestroy()
     {
@@ -37,7 +37,7 @@ public class LobbyRequest : BaseRequest
     }
 
 
-    public void SendChat(string str)
+    public void SendChat(string str,BasePanel panel)
     {
         Mainpack pack = new Mainpack();
         pack.Requestcode = requestCode;
@@ -45,9 +45,14 @@ public class LobbyRequest : BaseRequest
         pack.Playerpack.Add(face.m_Role);
         pack.Str = str;
         SendRequest(pack);
+        if (lobbyPanel==null)
+        {
+            lobbyPanel = panel as LobbyPanel;
+        }
     }
     private void ChatCallBack(Mainpack pack)
     {
+        bool isSelf=false;
         if (pack.Playerpack[0].Playername==face.m_Role.Playername)
         {
             switch (pack.Returncode)
@@ -61,9 +66,10 @@ public class LobbyRequest : BaseRequest
                 default:
                     break;
             }
-            return;
+            isSelf = true;
+            
         }
-        lobbyPanel.GetMessage(pack);
+        lobbyPanel.GetMessage(pack,isSelf);
 
     }
 

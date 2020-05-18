@@ -1,57 +1,56 @@
-
 using System;
 using System.Linq;
 using SocketGameProtocol;
 using Google.Protobuf;
 
-    class Message
+class Message
+{
+    private byte[] buffer = new byte[1024];
+    private int startIndex;
+
+    public byte[] Buffer
     {
-        private byte[] buffer = new byte[1024];
-        private int startIndex;
+        get
+        {
+            return buffer;
+        }
+    }
 
-        public byte[] Buffer
+    public int StartIndex
+    {
+        get
         {
-            get
-            {
-                return buffer;
-            }
+            return startIndex;
         }
+    }
 
-        public int StartIndex
+    public int RemSize
+    {
+        get
         {
-            get
-            {
-                return startIndex;
-            }
+            return buffer.Length - startIndex;
         }
-
-        public int RemSize
+    }
+    public void ReadBuffer(int len, Action<Mainpack> HandleResponse)
+    {
+        startIndex += len;
+        if (startIndex <= 4)
         {
-            get
-            {
-                return buffer.Length - startIndex;
-            }
+            return;
         }
-        public void ReadBuffer(int len,Action<Mainpack> HandleResponse)
+        int count = BitConverter.ToInt32(buffer, 0);
+        if (startIndex >= (count + 4))
         {
-            startIndex += len;
-            if(startIndex<=4)
-            {
-                return;
-            }
-            int count = BitConverter.ToInt32(buffer, 0);
-            if (startIndex>=(count+4))
-            {
-                Mainpack pack = (Mainpack)Mainpack.Descriptor.Parser.ParseFrom(buffer, 4, count);
-                HandleResponse(pack);
-                Array.Copy(buffer, count + 4, buffer, 0, startIndex - count - 4);
-                startIndex -= (count + 4);
-            }
-            else
-            {
-                return;
-            }
+            Mainpack pack = (Mainpack)Mainpack.Descriptor.Parser.ParseFrom(buffer, 4, count);
+            HandleResponse(pack);
+            Array.Copy(buffer, count + 4, buffer, 0, startIndex - count - 4);
+            startIndex -= (count + 4);
         }
+        else
+        {
+            return;
+        }
+    }
 
     public void ReadBuffer<T>(int len, Action<T> HandleResponse)
     {
@@ -75,9 +74,14 @@ using Google.Protobuf;
     }
 
     public static byte[] PackData(Mainpack pack)
-        {
-            byte[] data = pack.ToByteArray();//包体
-            byte[] head = BitConverter.GetBytes(data.Length);//包头
-            return head.Concat(data).ToArray();
-        }
+    {
+        byte[] data = pack.ToByteArray();//包体
+        byte[] head = BitConverter.GetBytes(data.Length);//包头
+        return head.Concat(data).ToArray();
     }
+
+    public static byte[] PackDataUDP(Mainpack pack)
+    {
+        return pack.ToByteArray();
+    }
+}

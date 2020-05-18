@@ -69,5 +69,10 @@ namespace SocketMultplayerGameServer.Tool
             byte[] head = BitConverter.GetBytes(data.Length);//包头
             return head.Concat(data).ToArray();
         }
+
+        public static byte[] PackDataUDP(Mainpack pack)
+        {
+            return pack.ToByteArray();
+        }
     }
 }
